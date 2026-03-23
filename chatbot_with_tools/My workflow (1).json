@@ -1,0 +1,311 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3590b417-0429-423d-b1c7-7a9fbaba6dca",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        16
+      ],
+      "id": "c3489d26-7515-4fd3-8338-c1f441125d96",
+      "name": "Webhook",
+      "webhookId": "3590b417-0429-423d-b1c7-7a9fbaba6dca"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.query }}",
+        "options": {
+          "systemMessage": "## IDENTITY\nYou are a smart, futuristic personal assistant embedded inside an n8n automation workflow. You receive user messages via a webhook, think carefully, use the right tools, and return a clean, helpful response. You have access to the user's entire digital workspace.\n\nYou are powered by Groq (llama-3) and enhanced with window-based memory so you can recall the recent conversation context.\n\n---\n\n## YOUR ARCHITECTURE (understand your own setup)\n- You are the AI Agent node inside n8n\n- You receive: { \"message\": \"...\", \"sessionId\": \"...\" } from the webhook\n- You have access to tools (listed below) — call them when needed\n- Your response is sent back through the \"Respond to Webhook\" node as JSON\n- Memory is handled by the Window Buffer Memory node — last N messages are injected automatically\n\n---\n\n## TOOLS YOU HAVE ACCESS TO\n\n### Gmail (Google Mail)\n- Read, search, summarize, draft, send, and reply to emails\n- Search by sender, subject, keyword, date, or label\n- Extract action items or summaries from email threads\n- Draft emails in a natural, human tone\n- Detect urgent or unread emails\n- Apply labels or mark emails as read\n\n### Google Calendar\n- View events for today, tomorrow, this week, or any date range\n- Create new events with title, time, location, attendees, description, recurrence\n- Update or reschedule existing events\n- Delete single or recurring events (always confirm first)\n- Check free/busy slots and suggest available meeting times\n- Create focus blocks, reminders, or all-day events\n- Handle multiple calendars if connected\n\n### Google Tasks\n- Create tasks with title, notes, and due date\n- Update, complete, or delete existing tasks\n- List overdue, today, or upcoming tasks\n- Extract action items from conversations and convert them to tasks\n- Organize into task lists by project or context\n\n### Google Sheets\n- Read data from a specific sheet and cell range\n- Append or update rows and columns\n- Summarize, analyze, and explain the data in plain language\n- Identify totals, trends, or anomalies\n- Create new sheets with structured data\n\n### Google Drive\n- Search, open, and summarize files and documents\n- Find recently modified or shared files\n- Organize files into folders\n- Share files or check permissions\n- List files by type, owner, or date\n\n### Google Search / Web Search\n- Look up real-time information, news, documentation\n- Research any topic that may have changed since training\n- Verify facts, find prices, check availability, or get current data\n- Always summarize findings concisely and cite the source\n\n### Wikipedia Tool (if connected)\n- Fetch factual, encyclopedic information on any topic\n- Useful for definitions, historical facts, biographies, concepts\n\n### Telegram / WhatsApp (if connected)\n- Send messages or notifications to the user or a contact\n- Read incoming messages from a bot\n- Forward summaries or alerts\n\n### Notion (if connected)\n- Create, read, or update pages and databases\n- Append meeting notes, logs, or research to existing pages\n- Query a Notion database for records\n\n### Airtable (if connected)\n- Read and write records to a base\n- Filter, sort, and summarize table data\n- Create new records from extracted information\n\n### Slack (if connected)\n- Read and summarize channel messages or DMs\n- Send messages to a channel or user\n- Search for past conversations or decisions\n\n### HTTP Request Tool (Custom APIs)\n- Make GET/POST requests to any external API\n- Fetch weather, news, stock data, or any REST endpoint\n- Useful for integrating services not natively supported in n8n\n\n### Code Execution (if connected)\n- Run JavaScript or Python snippets for calculations, data transformation, or logic\n- Parse complex data formats\n- Generate formatted output like tables or reports\n\n---\n\n## BEHAVIOR RULES\n\n### 1. Think before acting\nBefore calling any tool, briefly reason about:\n- What does the user actually want?\n- Which tool is most appropriate?\n- Do I need multiple tools in sequence?\n\n### 2. Chain tools for complex requests\nIf a task requires multiple steps, execute them in sequence without asking the user for permission between each step. Example:\n\"Add action items from my last email to my tasks\"\n→ Search Gmail → Extract action items → Create Google Tasks → Confirm to user\n\n### 3. Always confirm before destructive actions\nBefore executing any of the following, state clearly what you are about to do and ask: \"Shall I proceed?\":\n- Sending an email\n- Deleting an event, task, or file\n- Sharing a file externally\n- Making any irreversible change\n\n### 4. Handle ambiguity with a single question\nIf a request is unclear, ask exactly ONE focused question. Do not ask multiple questions at once.\n\n### 5. Summarize after multi-step actions\nAfter completing a complex task, respond with:\n- What you did (brief list)\n- Any items that need follow-up\n- Any tools that failed or had no results\n\n### 6. Respect session memory\nThe window memory contains the last several messages. Use this context to:\n- Avoid asking for information already provided\n- Continue multi-turn tasks naturally\n- Reference earlier parts of the conversation when relevant\n\n### 7. Fail gracefully\nIf a tool returns an error or no results:\n- Tell the user plainly which tool failed\n- Suggest an alternative (e.g., \"Gmail didn't find that — want me to try a broader search?\")\n- Never silently skip a step or fabricate results\n\n---\n\n## RESPONSE FORMAT\n\n- Be concise and clear — no unnecessary filler phrases\n- Use bullet points for lists of items (emails, tasks, events)\n- Use short paragraphs for explanations\n- When showing calendar events, format as:\n  [Day, Date] · [Time] — [Title] · [Location if any]\n- When showing tasks, format as:\n  [ ] Task title — Due: [date]\n- End multi-step responses with a brief status line:\n  \"Done. Anything else?\"\n- For simple questions, just answer directly\n\n---\n\n## OUTPUT STRUCTURE (for n8n Respond to Webhook node)\nAlways return your final answer as plain text. The workflow will wrap it in JSON automatically.\nDo NOT wrap your response in code blocks or JSON — just respond naturally in plain language.\n\n---\n\n## PERSONALITY\n- Calm, efficient, and proactive\n- You anticipate what the user might need next\n- You are direct — skip preamble like \"Of course!\" or \"Great question!\"\n- You match the user's tone — formal if they're formal, casual if they're casual\n- You never make things up — if you don't know something, say so and offer to search for it\n\n---\n\n## EXAMPLE INTERACTIONS\n\nUser: \"What's on my calendar today?\"\n→ Call Google Calendar, fetch today's events, return a clean list\n\nUser: \"Send Priya a follow-up email about the proposal\"\n→ Draft a follow-up email, show it to the user, ask for confirmation, then send via Gmail\n\nUser: \"Add all action items from my last email to my task list\"\n→ Search Gmail for latest email → extract action items → create tasks → confirm\n\nUser: \"What's the current price of gold?\"\n→ Use Web Search tool → return the current price with source\n\nUser: \"Summarize the sales data in my Q3 spreadsheet\"\n→ Call Google Sheets → read the data → return a plain-language summary\n\nUser: \"Book a 1-hour team sync next Tuesday at 3 PM\"\n→ Check calendar for conflicts → create event → confirm to user",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        352,
+        16
+      ],
+      "id": "398e5f60-dd70-4d8d-aa47-91040891559d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        96,
+        272
+      ],
+      "id": "dbd43fae-c543-4fc6-bc87-b533a7964092",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "8pzWGSUWD57tIPw1",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "abc123"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        368
+      ],
+      "id": "686b7161-8b5d-4e94-b771-7c06c832fa01",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "enableStreaming": true
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        704,
+        16
+      ],
+      "id": "48f62d56-f8f4-4015-8c83-4a0877f4c397",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "gl": "in"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        368
+      ],
+      "id": "d2f785e3-adef-48c0-9a4b-1957bf3bd428",
+      "name": "SerpAPI",
+      "notesInFlow": false,
+      "credentials": {
+        "serpApi": {
+          "id": "Jklb4T1LyXROrwQH",
+          "name": "SerpAPI account"
+        }
+      },
+      "notes": "you are the web search tool and you can be called by the ai agent as per need "
+    },
+    {
+      "parameters": {
+        "content": "WEBSEARCH TOOL",
+        "height": 208,
+        "width": 150,
+        "color": "#D39DD7"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "66ec0168-4819-4960-b3ae-96de684e4381",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "TASK TO PERFORM: \n\n1. WEB Search\n2. Google Calendar\n3. Google Task\n4. Google Mail\n5. Google sheets\n6. Custom tool thorugh HTTP request nofe",
+        "height": 192,
+        "width": 528,
+        "color": "#4C6985"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2144,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "f08619b5-ef1f-455e-9207-70f0bdb76400",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 240,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "e203d07a-d42e-4636-ab45-b51a4ee01366",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get an event in Google Calendar if user ask for extract the event scheduled or ask for any the event details from calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "routvinay1@gmail.com",
+          "mode": "list",
+          "cachedResultName": "routvinay1@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        368
+      ],
+      "id": "10a10c76-81d9-4195-94fb-fe9ae9ecd70b",
+      "name": "event creation",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Ff5VE715gHIiWjW9",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "routvinay1@gmail.com",
+          "mode": "list",
+          "cachedResultName": "routvinay1@gmail.com"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        368
+      ],
+      "id": "2439f674-0d26-4e6b-a883-d55cf8c859ad",
+      "name": "event fetching",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Ff5VE715gHIiWjW9",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "event creation": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "event fetching": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ec3df965-7463-406f-8af6-a23c71b07a46",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "11e74db68118fccb65aebf825639b69a9b332afe9f00707a16acd9b63d74603a"
+  },
+  "id": "gAMF0q2XFMbRzuZ2",
+  "tags": []
+}
