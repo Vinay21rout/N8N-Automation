@@ -6,7 +6,7 @@ An AI-powered chatbot interface built with **Streamlit**, connected to an **n8n*
 
 ## 📸 Workflow
 
-![n8n Workflow](../screenshots/Screenshot%202026-03-23%20094346.png)
+![n8n Workflow](../screenshots/chatbot_with_tools_workflow_image.png)
 
 ---
 

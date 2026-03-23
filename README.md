@@ -6,7 +6,7 @@ A growing collection of **n8n** automation workflows with AI capabilities, each 
 
 ## 📸 Workflow Preview
 
-![n8n Workflow](./screenshots/Screenshot%202026-03-23%20094346.png)
+![n8n Workflow](./screenshots/chatbot_with_tools_workflow_image.png)
 
 ---
 
@@ -20,7 +20,7 @@ N8N-Automation/
 │   ├── requirements.txt
 │   └── README.md
 ├── screenshots/
-│   └── Screenshot 2026-03-23 094346.png
+│   └── chatbot_with_tools_workflow_image.png
 └── README.md                   # This file
 ```
 
